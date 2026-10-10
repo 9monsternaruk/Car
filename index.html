@@ -1,4 +1,3 @@
-
 <html lang="th">
 <head>
     <meta charset="UTF-8">
@@ -41,26 +40,30 @@
 
     <!-- Header -->
     <header class="bg-primary text-white shadow-md sticky top-0 z-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div class="bg-white/20 p-2 rounded-lg"><i class="fa-solid fa-car-side text-xl"></i></div>
                 <div>
-                    <h1 class="text-xl font-semibold leading-tight">ระบบทะเบียนรถลูกบ้าน</h1>
+                    <h1 class="text-lg sm:text-xl font-semibold leading-tight">ระบบทะเบียนรถลูกบ้าน</h1>
                     <p class="text-xs text-blue-200">Vehicle Registry & Directory</p>
                 </div>
             </div>
-            <div class="hidden sm:block">
-                <span class="text-sm font-light bg-blue-800 px-3 py-1 rounded-full"><i class="fa-solid fa-shield-halved mr-1"></i> สำหรับปภ.</span>
+            <div class="flex items-center gap-2">
+                <!-- Status Badge แสดงสถานะความเร็วและการเชื่อมต่อ -->
+                <span id="syncBadge" class="text-xs bg-blue-800/80 border border-blue-400/30 px-3 py-1 rounded-full flex items-center gap-1.5 font-light">
+                    <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" id="syncDot"></span>
+                    <span id="syncText">กำลังโหลดข้อมูล...</span>
+                </span>
             </div>
         </div>
     </header>
 
     <!-- Mobile Tabs -->
-    <div class="lg:hidden bg-white shadow-sm sticky top-[72px] z-10 border-b border-slate-200 flex">
-        <button id="tabSearch" class="flex-1 py-3.5 text-sm font-medium text-primary border-b-2 border-primary transition-colors flex items-center justify-center gap-2" onclick="window.switchTab('search')">
+    <div class="lg:hidden bg-white shadow-sm sticky top-[60px] z-10 border-b border-slate-200 flex">
+        <button id="tabSearch" class="flex-1 py-3 text-sm font-medium text-primary border-b-2 border-primary transition-colors flex items-center justify-center gap-2" onclick="window.switchTab('search')">
             <i class="fa-solid fa-magnifying-glass"></i> ค้นหา
         </button>
-        <button id="tabAdd" class="flex-1 py-3.5 text-sm font-medium text-slate-400 border-b-2 border-transparent transition-colors flex items-center justify-center gap-2" onclick="window.switchTab('add')">
+        <button id="tabAdd" class="flex-1 py-3 text-sm font-medium text-slate-400 border-b-2 border-transparent transition-colors flex items-center justify-center gap-2" onclick="window.switchTab('add')">
             <i class="fa-solid fa-file-circle-plus"></i> เพิ่ม/แก้ไขรถ
         </button>
     </div>
@@ -79,7 +82,7 @@
                             <i class="fa-solid fa-search text-slate-400"></i>
                         </div>
                         <input type="text" id="searchInput" 
-                            class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-xl focus:ring-secondary focus:border-secondary block w-full pl-11 p-3.5 transition-all outline-none" 
+                            class="bg-slate-50 border border-slate-300 text-slate-900 text-base rounded-xl focus:ring-secondary focus:border-secondary block w-full pl-11 p-3.5 transition-all outline-none" 
                             placeholder="พิมพ์ป้ายทะเบียน หรือ บ้านเลขที่..." autocomplete="off">
                         <button id="clearSearchBtn" class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-600 hidden cursor-pointer">
                             <i class="fa-solid fa-xmark text-lg"></i>
@@ -112,14 +115,13 @@
                     <div id="duplicateBanner" class="hidden mb-4 bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-xl text-sm flex items-start gap-3">
                         <i class="fa-solid fa-triangle-exclamation text-yellow-500 mt-0.5 text-lg"></i>
                         <div>
-                            <p class="font-bold">พบข้อมูลทะเบียนนี้แล้ว!</p>
-                            <p class="text-yellow-700 text-xs mt-0.5">ระบบดึงข้อมูลเดิมมาแสดง หากกดปุ่มด้านล่างจะเป็นการ <u>แก้ไขข้อมูลเดิม</u> แทนการเพิ่มใหม่</p>
+                            <p class="font-bold">พบข้อมูลทะเบียนนี้ในระบบแล้ว!</p>
+                            <p class="text-yellow-700 text-xs mt-0.5">ระบบดึงข้อมูลเดิมมาแสดง หากกดปุ่มด้านล่างจะเป็นการ <u>แก้ไขข้อมูลเดิม</u></p>
                         </div>
                     </div>
                     
                     <form id="addVehicleForm" class="flex flex-col gap-5">
                         
-                        <!-- ย้ายทะเบียนรถมาไว้ช่องแรก เพื่อให้เช็คเร็ว -->
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-slate-700">หมายเลขทะเบียนรถ <span class="text-red-500">*</span></label>
                             <div class="relative">
@@ -127,9 +129,6 @@
                                     <i class="fa-solid fa-id-card text-slate-400 text-sm"></i>
                                 </div>
                                 <input type="text" id="licensePlate" required class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-secondary focus:border-secondary block w-full pl-10 p-2.5 outline-none transition-all uppercase" placeholder="เช่น กข 1234 กทม.">
-                                <div id="plateCheckLoading" class="hidden absolute inset-y-0 right-0 flex items-center pr-3">
-                                    <i class="fa-solid fa-circle-notch fa-spin text-secondary"></i>
-                                </div>
                             </div>
                         </div>
 
@@ -161,12 +160,10 @@
                             <label class="block mb-1.5 text-sm font-medium text-slate-700">ประเภทรถ</label>
                             <select id="carType" class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-secondary focus:border-secondary block w-full p-2.5 outline-none transition-all cursor-pointer">
                                 <option value="" disabled selected>-- เลือกประเภท --</option>
-                                <option value="1">รถเก๋ง</option>
-                                <option value="2">รถกะบะ</option>
-                                <option value="3">รถตู้</option>
-                                <option value="4">มอเตอร์ไซค์</option>
-                                <option value="5">รถยนต์ไฟฟ้า</option>
-                                <option value="6">อื่นๆ</option>
+                                <option value="1">รถยนต์ (1)</option>
+                                <option value="2">มอเตอร์ไซค์ (2)</option>
+                                <option value="3">รถยนต์ไฟฟ้า (3)</option>
+                                <option value="4">อื่นๆ (4)</option>
                             </select>
                         </div>
 
@@ -187,9 +184,8 @@
     <!-- Firebase SDK (Modular) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, query, where, updateDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, updateDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // 1. Firebase Configuration ที่คุณให้มา
         const firebaseConfig = {
             apiKey: "AIzaSyCXuj7Pl1JnBn2Y7BtyzkHHQm4MQH-isrM",
             authDomain: "time-attendance-69699.firebaseapp.com",
@@ -199,17 +195,22 @@
             appId: "1:793986547170:web:337bfe602d9b3e32f34dbb"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const vehiclesCollection = collection(db, "vehicles");
 
-        // Global Variables
-        let currentEditingId = null; 
-        let searchDebounceTimer;
-        let plateCheckDebounceTimer;
+        // ==========================================
+        // In-Memory Cache (เก็บข้อมูลในหน่วยความจำเพื่อความเร็วแสง)
+        // ==========================================
+        let vehiclesCache = [];
+        let isInitialLoad = true;
+        let currentEditingId = null;
 
         // UI Elements
+        const syncBadge = document.getElementById('syncBadge');
+        const syncDot = document.getElementById('syncDot');
+        const syncText = document.getElementById('syncText');
+
         const sectionSearch = document.getElementById('sectionSearch');
         const sectionAdd = document.getElementById('sectionAdd');
         const tabSearch = document.getElementById('tabSearch');
@@ -223,14 +224,194 @@
         const submitBtn = document.getElementById('submitBtn');
         const cancelEditBtn = document.getElementById('cancelEditBtn');
         const licensePlateInput = document.getElementById('licensePlate');
-        const plateCheckLoading = document.getElementById('plateCheckLoading');
         
         const duplicateBanner = document.getElementById('duplicateBanner');
         const editModeAlert = document.getElementById('editModeAlert');
         const formTitleIcon = document.getElementById('formTitleIcon');
 
         // ==========================================
-        // Tab Navigation
+        // Real-Time Data Sync (ดาวน์โหลดครั้งเดียว แล้วอัปเดตอัตโนมัติ)
+        // ==========================================
+        onSnapshot(vehiclesCollection, (snapshot) => {
+            vehiclesCache = [];
+            snapshot.forEach((doc) => {
+                vehiclesCache.push({ id: doc.id, ...doc.data() });
+            });
+
+            // อัปเดตสถานะ Badge
+            syncDot.classList.remove('bg-yellow-400', 'animate-pulse');
+            syncDot.classList.add('bg-green-400');
+            syncText.textContent = `พร้อมใช้งาน (${vehiclesCache.length} คัน)`;
+
+            // หากมีคำค้นหาค้างอยู่ ให้รีเฟรชผลลัพธ์ทันที
+            if (searchInput.value.trim().length > 0) {
+                instantSearch(searchInput.value.trim());
+            }
+
+            isInitialLoad = false;
+        }, (error) => {
+            console.error("Firestore Listen Error:", error);
+            syncDot.classList.remove('bg-yellow-400', 'animate-pulse');
+            syncDot.classList.add('bg-red-500');
+            syncText.textContent = 'เชื่อมต่อฐานข้อมูลล้มเหลว';
+        });
+
+        // ==========================================
+        // ฟังก์ชันค้นหาความเร็วสูง (Instant In-Memory Filter)
+        // ==========================================
+        function instantSearch(keyword) {
+            const rawKey = keyword.trim().toLowerCase();
+            // ตัวเปรียบเทียบแบบตัดช่องว่าง (เช่น 3813 หรือ กข 1234)
+            const cleanKey = rawKey.replace(/\s+/g, '');
+
+            if (!cleanKey) {
+                renderEmptyState();
+                return;
+            }
+
+            const matched = vehiclesCache.filter(item => {
+                const plate = String(item.licensePlate || '').toLowerCase().replace(/\s+/g, '');
+                const house = String(item.houseNo || '').toLowerCase().replace(/\s+/g, '');
+                const brand = String(item.brand || '').toLowerCase();
+                return plate.includes(cleanKey) || house.includes(cleanKey) || brand.includes(rawKey);
+            });
+
+            renderResults(matched, keyword);
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            const val = e.target.value;
+            if (val.trim().length > 0) {
+                clearSearchBtn.classList.remove('hidden');
+                instantSearch(val);
+            } else {
+                clearSearchBtn.classList.add('hidden');
+                renderEmptyState();
+            }
+        });
+
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            clearSearchBtn.classList.add('hidden');
+            searchInput.focus();
+            renderEmptyState();
+        });
+
+        // ==========================================
+        // ตรวจสอบทะเบียนซ้ำแบบ Real-time (ทันทีขณะพิมพ์)
+        // ==========================================
+        licensePlateInput.addEventListener('input', (e) => {
+            const inputClean = e.target.value.trim().toLowerCase().replace(/\s+/g, '');
+            if (inputClean.length < 2) {
+                resetFormToCreateMode();
+                return;
+            }
+
+            // ค้นหาใน Cache ทันที ไม่ต้องรอส่งเน็ต
+            const found = vehiclesCache.find(item => {
+                const plateClean = String(item.licensePlate || '').toLowerCase().replace(/\s+/g, '');
+                return plateClean === inputClean;
+            });
+
+            if (found) {
+                setFormToEditMode(found.id, found);
+            } else {
+                resetFormToCreateMode();
+            }
+        });
+
+        function setFormToEditMode(id, data) {
+            currentEditingId = id;
+            document.getElementById('houseNo').value = data.houseNo || '';
+            document.getElementById('carColor').value = data.color || '';
+            document.getElementById('carBrand').value = data.brand || '';
+            document.getElementById('carType').value = data.type || '';
+            
+            duplicateBanner.classList.remove('hidden');
+            editModeAlert.classList.remove('hidden');
+            cancelEditBtn.classList.remove('hidden');
+            
+            submitBtn.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> อัปเดตข้อมูล (Edit)`;
+            submitBtn.classList.replace('bg-primary', 'bg-yellow-600');
+            submitBtn.classList.replace('hover:bg-blue-800', 'hover:bg-yellow-700');
+            formTitleIcon.classList.replace('fa-file-circle-plus', 'fa-pen-to-square');
+        }
+
+        function resetFormToCreateMode() {
+            if (!currentEditingId) return;
+            currentEditingId = null;
+            
+            const currentPlate = document.getElementById('licensePlate').value;
+            addVehicleForm.reset();
+            document.getElementById('licensePlate').value = currentPlate;
+            
+            duplicateBanner.classList.add('hidden');
+            editModeAlert.classList.add('hidden');
+            cancelEditBtn.classList.add('hidden');
+            
+            submitBtn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูลใหม่`;
+            submitBtn.classList.replace('bg-yellow-600', 'bg-primary');
+            submitBtn.classList.replace('hover:bg-yellow-700', 'hover:bg-blue-800');
+            formTitleIcon.classList.replace('fa-pen-to-square', 'fa-file-circle-plus');
+        }
+
+        cancelEditBtn.addEventListener('click', () => {
+            currentEditingId = true;
+            document.getElementById('licensePlate').value = '';
+            resetFormToCreateMode();
+        });
+
+        // ==========================================
+        // บันทึก / แก้ไข ข้อมูล
+        // ==========================================
+        addVehicleForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const payload = {
+                houseNo: document.getElementById('houseNo').value.trim(),
+                licensePlate: document.getElementById('licensePlate').value.trim(),
+                searchPlate: document.getElementById('licensePlate').value.trim().toLowerCase(),
+                color: document.getElementById('carColor').value.trim(),
+                brand: document.getElementById('carBrand').value.trim(),
+                type: document.getElementById('carType').value
+            };
+
+            const originalBtnHtml = submitBtn.innerHTML;
+            submitBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> กำลังบันทึก...`;
+            submitBtn.disabled = true;
+
+            try {
+                if (currentEditingId) {
+                    const docRef = doc(db, "vehicles", currentEditingId);
+                    payload.updatedAt = serverTimestamp();
+                    await updateDoc(docRef, payload);
+                    Swal.fire({ icon: 'success', title: 'อัปเดตเรียบร้อย!', text: `ทะเบียน ${payload.licensePlate} ได้รับการแก้ไขแล้ว`, confirmButtonColor: '#eab308' });
+                } else {
+                    payload.createdAt = serverTimestamp();
+                    await addDoc(vehiclesCollection, payload);
+                    Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ!', text: `เพิ่มรถทะเบียน ${payload.licensePlate} เรียบร้อย`, confirmButtonColor: '#3b82f6' });
+                }
+                
+                currentEditingId = true;
+                resetFormToCreateMode();
+                document.getElementById('licensePlate').value = '';
+                
+                if (window.innerWidth < 1024) window.switchTab('search');
+                searchInput.value = payload.licensePlate;
+                clearSearchBtn.classList.remove('hidden');
+                instantSearch(payload.licensePlate);
+
+            } catch (error) {
+                console.error(error);
+                Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: error.message || 'บันทึกข้อมูลไม่สำเร็จ' });
+            } finally {
+                submitBtn.innerHTML = originalBtnHtml;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // ==========================================
+        // สลับแท็บ และฟังก์ชันเรียกจากผลค้นหา
         // ==========================================
         window.switchTab = function(tabName) {
             if (window.innerWidth >= 1024) return;
@@ -261,189 +442,23 @@
             }
         });
 
-        // ==========================================
-        // ตรวจสอบข้อมูลซ้ำอัตโนมัติ (Auto Check Plate)
-        // ==========================================
-        licensePlateInput.addEventListener('input', (e) => {
-            const plateStr = e.target.value.trim().toLowerCase();
-            clearTimeout(plateCheckDebounceTimer);
-            
-            if (plateStr.length < 2) {
-                resetFormToCreateMode();
-                return;
-            }
-
-            plateCheckLoading.classList.remove('hidden');
-
-            plateCheckDebounceTimer = setTimeout(async () => {
-                try {
-                    const q = query(vehiclesCollection, where("searchPlate", "==", plateStr));
-                    const querySnapshot = await getDocs(q);
-                    
-                    if (!querySnapshot.empty) {
-                        // เจอข้อมูลซ้ำ -> เปลี่ยนเป็นโหมดอัปเดต
-                        const docData = querySnapshot.docs[0];
-                        setFormToEditMode(docData.id, docData.data());
-                    } else {
-                        // ไม่เจอข้อมูล -> กลับเป็นโหมดสร้าง
-                        resetFormToCreateMode();
-                    }
-                } catch (error) {
-                    console.error("Error checking plate:", error);
-                } finally {
-                    plateCheckLoading.classList.add('hidden');
-                }
-            }, 700); 
-        });
-
-        function setFormToEditMode(id, data) {
-            currentEditingId = id;
-            document.getElementById('houseNo').value = data.houseNo || '';
-            document.getElementById('carColor').value = data.color || '';
-            document.getElementById('carBrand').value = data.brand || '';
-            document.getElementById('carType').value = data.type || '';
-            
-            duplicateBanner.classList.remove('hidden');
-            editModeAlert.classList.remove('hidden');
-            cancelEditBtn.classList.remove('hidden');
-            
-            submitBtn.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> อัปเดตข้อมูล (Edit)`;
-            submitBtn.classList.replace('bg-primary', 'bg-yellow-600');
-            submitBtn.classList.replace('hover:bg-blue-800', 'hover:bg-yellow-700');
-            formTitleIcon.classList.replace('fa-file-circle-plus', 'fa-pen-to-square');
-        }
-
-        function resetFormToCreateMode() {
-            if(!currentEditingId) return; // ถ้าไม่ได้อยู่โหมดแก้ไข ไม่ต้องล้างฟอร์ม
-            currentEditingId = null;
-            
-            const currentPlate = document.getElementById('licensePlate').value;
-            addVehicleForm.reset();
-            document.getElementById('licensePlate').value = currentPlate; // คงทะเบียนไว้
-            
-            duplicateBanner.classList.add('hidden');
-            editModeAlert.classList.add('hidden');
-            cancelEditBtn.classList.add('hidden');
-            
-            submitBtn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูลใหม่`;
-            submitBtn.classList.replace('bg-yellow-600', 'bg-primary');
-            submitBtn.classList.replace('hover:bg-yellow-700', 'hover:bg-blue-800');
-            formTitleIcon.classList.replace('fa-pen-to-square', 'fa-file-circle-plus');
-        }
-
-        cancelEditBtn.addEventListener('click', () => {
-            currentEditingId = true; // trick to force reset
-            document.getElementById('licensePlate').value = '';
-            resetFormToCreateMode();
-        });
-
-        // ==========================================
-        // บันทึก / แก้ไข ข้อมูล (Submit)
-        // ==========================================
-        addVehicleForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const payload = {
-                houseNo: document.getElementById('houseNo').value.trim(),
-                licensePlate: document.getElementById('licensePlate').value.trim(),
-                searchPlate: document.getElementById('licensePlate').value.trim().toLowerCase(), // ไว้ใช้ค้นหา (ตัวเล็ก)
-                color: document.getElementById('carColor').value.trim(),
-                brand: document.getElementById('carBrand').value.trim(),
-                type: document.getElementById('carType').value
-            };
-
-            const originalBtnHtml = submitBtn.innerHTML;
-            submitBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> กำลังประมวลผล...`;
-            submitBtn.disabled = true;
-
-            try {
-                if (currentEditingId) {
-                    // Update (แก้ไขข้อมูลเดิม)
-                    const docRef = doc(db, "vehicles", currentEditingId);
-                    payload.updatedAt = serverTimestamp();
-                    await updateDoc(docRef, payload);
-                    
-                    Swal.fire({ icon: 'success', title: 'อัปเดตสำเร็จ!', text: `อัปเดตข้อมูลรถ ${payload.licensePlate} เรียบร้อยแล้ว`, confirmButtonColor: '#eab308' });
-                } else {
-                    // Add New (สร้างใหม่)
-                    payload.createdAt = serverTimestamp();
-                    await addDoc(vehiclesCollection, payload);
-                    
-                    Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ!', text: `เพิ่มรถทะเบียน ${payload.licensePlate} เข้าระบบแล้ว`, confirmButtonColor: '#3b82f6' });
-                }
-                
-                currentEditingId = true; resetFormToCreateMode(); // ล้างฟอร์ม
-                document.getElementById('licensePlate').value = ''; 
-                
-                if (window.innerWidth < 1024) window.switchTab('search');
-                searchInput.value = payload.licensePlate;
-                clearSearchBtn.classList.remove('hidden');
-                performSearch(payload.licensePlate);
-
-            } catch (error) {
-                console.error(error);
-                Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: error.message || 'ไม่สามารถติดต่อฐานข้อมูลได้' });
-            } finally {
-                submitBtn.innerHTML = originalBtnHtml;
-                submitBtn.disabled = false;
-            }
-        });
-
-        // ==========================================
-        // ค้นหาข้อมูล (Search)
-        // ==========================================
-        searchInput.addEventListener('input', (e) => {
-            const keyword = e.target.value.trim();
-            if (keyword.length > 0) clearSearchBtn.classList.remove('hidden');
-            else {
-                clearSearchBtn.classList.add('hidden');
-                renderEmptyState(); return;
-            }
-
-            clearTimeout(searchDebounceTimer);
-            renderLoadingState();
-            searchDebounceTimer = setTimeout(() => performSearch(keyword), 400); 
-        });
-
-        clearSearchBtn.addEventListener('click', () => {
-            searchInput.value = ''; clearSearchBtn.classList.add('hidden');
-            searchInput.focus(); renderEmptyState();
-        });
-
         window.triggerEditFromSearch = function(plate) {
             if (window.innerWidth < 1024) window.switchTab('add');
             document.getElementById('licensePlate').value = plate;
-            // จำลอง Event trigger เพื่อให้ระบบเช็คซ้ำทำงานอัตโนมัติ
             document.getElementById('licensePlate').dispatchEvent(new Event('input', { bubbles: true }));
-        }
+        };
 
-        async function performSearch(keyword) {
-            try {
-                // ดึงข้อมูลทั้งหมดมา Filter ด้าน Client (เร็วและเหมาะกับการค้นหาบางส่วนแบบ Google Sheets)
-                const querySnapshot = await getDocs(vehiclesCollection);
-                const results = [];
-                const searchKey = keyword.toLowerCase();
-
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const plate = (data.licensePlate || '').toLowerCase();
-                    const house = (data.houseNo || '').toLowerCase();
-                    
-                    if (plate.includes(searchKey) || house.includes(searchKey)) {
-                        results.push({ id: doc.id, ...data });
-                    }
-                });
-
-                renderResults(results, keyword);
-            } catch (error) {
-                console.error(error);
-                resultsContainer.innerHTML = `<div class="text-center py-8 text-red-500 bg-red-50 rounded-xl border border-red-200"><i class="fa-solid fa-triangle-exclamation text-3xl mb-2"></i><p>เกิดข้อผิดพลาดในการดึงข้อมูล Database</p></div>`;
-            }
-        }
-
+        // ==========================================
+        // Render UI Results
+        // ==========================================
         function renderResults(data, keyword) {
             if (!data || data.length === 0) {
-                resultsContainer.innerHTML = `<div class="text-center py-12 text-slate-500 bg-white rounded-2xl shadow-sm border border-slate-200"><i class="fa-regular fa-face-frown-open text-4xl mb-3 text-slate-300"></i><p class="font-medium text-lg">ไม่พบข้อมูล</p><p class="text-sm text-slate-400 mt-1">ไม่พบรถที่ตรงกับ "${keyword}"</p></div>`;
+                resultsContainer.innerHTML = `
+                    <div class="text-center py-12 text-slate-500 bg-white rounded-2xl shadow-sm border border-slate-200">
+                        <i class="fa-regular fa-face-frown-open text-4xl mb-3 text-slate-300"></i>
+                        <p class="font-medium text-lg">ไม่พบข้อมูล</p>
+                        <p class="text-sm text-slate-400 mt-1">ไม่พบรถที่ตรงกับ "${keyword}"</p>
+                    </div>`;
                 return;
             }
 
@@ -452,14 +467,15 @@
             data.forEach(item => {
                 let carIcon = 'fa-car';
                 const typeStr = String(item.type || '');
-                if(typeStr.includes('มอเตอร์ไซค์') || typeStr === '2') carIcon = 'fa-motorcycle';
-                else if(typeStr.includes('กระบะ') || typeStr.includes('ตู้')) carIcon = 'fa-truck-pickup';
-                else if(typeStr.includes('ไฟฟ้า') || typeStr === '3') carIcon = 'fa-plug-circle-bolt'; 
+                if (typeStr.includes('มอเตอร์ไซค์') || typeStr === '2') carIcon = 'fa-motorcycle';
+                else if (typeStr.includes('กระบะ') || typeStr.includes('ตู้')) carIcon = 'fa-truck-pickup';
+                else if (typeStr.includes('ไฟฟ้า') || typeStr === '3') carIcon = 'fa-plug-circle-bolt'; 
 
                 let typeDisplay = item.type;
-                if(typeStr === '1') typeDisplay = 'รถยนต์';
-                else if(typeStr === '2') typeDisplay = 'มอเตอร์ไซค์';
-                else if(typeStr === '3') typeDisplay = 'รถยนต์ไฟฟ้า';
+                if (typeStr === '1') typeDisplay = 'รถยนต์';
+                else if (typeStr === '2') typeDisplay = 'มอเตอร์ไซค์';
+                else if (typeStr === '3') typeDisplay = 'รถยนต์ไฟฟ้า';
+                else if (typeStr === '4') typeDisplay = 'อื่นๆ';
 
                 html += `
                     <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow relative overflow-hidden group">
@@ -490,8 +506,13 @@
             resultsContainer.innerHTML = html;
         }
 
-        function renderEmptyState() { resultsContainer.innerHTML = `<div class="text-center py-12 text-slate-400 bg-white rounded-2xl border border-dashed border-slate-300 shadow-sm"><i class="fa-solid fa-car text-4xl mb-3 text-slate-200"></i><p>พิมพ์ข้อมูลเพื่อเริ่มการค้นหา</p></div>`; }
-        function renderLoadingState() { resultsContainer.innerHTML = `<div class="bg-white p-5 rounded-2xl border border-slate-100 flex gap-4 items-center"><div class="w-12 h-12 rounded-full shimmer shrink-0"></div><div class="w-full"><div class="h-6 w-32 shimmer rounded mb-2"></div><div class="h-4 w-48 shimmer rounded"></div></div></div>`.repeat(3); }
+        function renderEmptyState() { 
+            resultsContainer.innerHTML = `
+                <div class="text-center py-12 text-slate-400 bg-white rounded-2xl border border-dashed border-slate-300 shadow-sm">
+                    <i class="fa-solid fa-car text-4xl mb-3 text-slate-200"></i>
+                    <p>พิมพ์ข้อมูลเพื่อเริ่มการค้นหา</p>
+                </div>`; 
+        }
     </script>
 </body>
 </html>
