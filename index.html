@@ -38,20 +38,20 @@
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col">
 
-    <!-- Header -->
+    <!-- Header (ปรับแก้ Responsive ป้องกันข้อความตกบรรทัด) -->
     <header class="bg-primary text-white shadow-md sticky top-0 z-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="bg-white/20 p-2 rounded-lg"><i class="fa-solid fa-car-side text-xl"></i></div>
-                <div>
-                    <h1 class="text-lg sm:text-xl font-semibold leading-tight">ระบบทะเบียนรถลูกบ้าน</h1>
-                    <p class="text-xs text-blue-200">Vehicle Registry & Directory</p>
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-3.5 flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+                <div class="bg-white/20 p-1.5 sm:p-2 rounded-lg shrink-0"><i class="fa-solid fa-car-side text-lg sm:text-xl"></i></div>
+                <div class="min-w-0">
+                    <h1 class="text-base sm:text-xl font-semibold leading-tight truncate">ระบบทะเบียนรถลูกบ้าน</h1>
+                    <p class="text-[10px] sm:text-xs text-blue-200 truncate">Vehicle Registry & Directory</p>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
-                <!-- Status Badge แสดงสถานะความเร็วและการเชื่อมต่อ -->
-                <span id="syncBadge" class="text-xs bg-blue-800/80 border border-blue-400/30 px-3 py-1 rounded-full flex items-center gap-1.5 font-light">
-                    <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" id="syncDot"></span>
+            <div class="flex items-center shrink-0">
+                <!-- Status Badge ปรับให้ไม่ตกบรรทัดด้วย whitespace-nowrap -->
+                <span id="syncBadge" class="text-[10px] sm:text-xs bg-blue-800/80 border border-blue-400/30 px-2 sm:px-3 py-1 rounded-full flex items-center gap-1.5 font-light whitespace-nowrap shrink-0">
+                    <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-yellow-400 animate-pulse shrink-0" id="syncDot"></span>
                     <span id="syncText">กำลังโหลดข้อมูล...</span>
                 </span>
             </div>
@@ -59,7 +59,7 @@
     </header>
 
     <!-- Mobile Tabs -->
-    <div class="lg:hidden bg-white shadow-sm sticky top-[60px] z-10 border-b border-slate-200 flex">
+    <div class="lg:hidden bg-white shadow-sm sticky top-[53px] sm:top-[60px] z-10 border-b border-slate-200 flex">
         <button id="tabSearch" class="flex-1 py-3 text-sm font-medium text-primary border-b-2 border-primary transition-colors flex items-center justify-center gap-2" onclick="window.switchTab('search')">
             <i class="fa-solid fa-magnifying-glass"></i> ค้นหา
         </button>
